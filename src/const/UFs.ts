@@ -1,0 +1,31 @@
+const UFs: { codigo: number, sigla: string, estado: string }[] = [
+    { codigo: 11, sigla: "RO", estado: "Rondônia" },
+    { codigo: 12, sigla: "AC", estado: "Acre" },
+    { codigo: 13, sigla: "AM", estado: "Amazonas" },
+    { codigo: 14, sigla: "RR", estado: "Roraima" },
+    { codigo: 15, sigla: "PA", estado: "Pará" },
+    { codigo: 16, sigla: "AP", estado: "Amapá" },
+    { codigo: 17, sigla: "TO", estado: "Tocantins" },
+    { codigo: 21, sigla: "MA", estado: "Maranhão" },
+    { codigo: 22, sigla: "PI", estado: "Piauí" },
+    { codigo: 23, sigla: "CE", estado: "Ceará" },
+    { codigo: 24, sigla: "RN", estado: "Rio Grande do Norte" },
+    { codigo: 25, sigla: "PB", estado: "Paraíba" },
+    { codigo: 26, sigla: "PE", estado: "Pernambuco" },
+    { codigo: 27, sigla: "AL", estado: "Alagoas" },
+    { codigo: 28, sigla: "SE", estado: "Sergipe" },
+    { codigo: 29, sigla: "BA", estado: "Bahia" },
+    { codigo: 31, sigla: "MG", estado: "Minas Gerais" },
+    { codigo: 32, sigla: "ES", estado: "Espírito Santo" },
+    { codigo: 33, sigla: "RJ", estado: "Rio de Janeiro" },
+    { codigo: 35, sigla: "SP", estado: "São Paulo" },
+    { codigo: 41, sigla: "PR", estado: "Paraná" },
+    { codigo: 42, sigla: "SC", estado: "Santa Catarina" },
+    { codigo: 43, sigla: "RS", estado: "Rio Grande do Sul" },
+    { codigo: 50, sigla: "MS", estado: "Mato Grosso do Sul" },
+    { codigo: 51, sigla: "MT", estado: "Mato Grosso" },
+    { codigo: 52, sigla: "GO", estado: "Goiás" },
+    { codigo: 53, sigla: "DF", estado: "Distrito Federal" }
+]
+
+export default UFs
