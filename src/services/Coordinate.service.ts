@@ -27,7 +27,7 @@ class CoordinateService {
         if (!points || points.length === 0) {
             throw new Error("UF sem coordenadas válidas")
         }
-        
+
         const randomPoint = points[Math.floor(Math.random() * points.length)]
 
         return {
@@ -36,14 +36,13 @@ class CoordinateService {
         }
     }
 
-    public async getCoord(): Promise<Coordinate> {
-        const uf = this.getRandomState()
-        const state = await this.ibgeAPI.getMalhaPerUF(uf)
+    public async getCoord(codigo?: number): Promise<Coordinate> {
+        codigo = this.getRandomState()
+
+        const state = await this.ibgeAPI.getMalhaPerUF(codigo)
 
         const feature = state.features[0]
-        if (!feature) {
-            throw new Error("Nenhuma feature encontrada para essa UF")
-        }
+        if (!feature) throw new Error("Nenhuma feature encontrada para essa UF")
 
         return this.getRandomCoordPerState(feature)
     }
