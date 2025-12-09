@@ -5,7 +5,7 @@ class CoordinateRoutes {
     private controller: CoordinateController
     private router: Router = Router()
 
-    private url = "/coordinate"
+    private readonly url = "/coordinate"
 
     constructor() {
         this.controller = new CoordinateController()

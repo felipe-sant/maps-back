@@ -1,6 +1,6 @@
-type CoordinateType = {
+type Coordinate = {
     lat: number,
     lon: number
 }
 
-export default CoordinateType
+export default Coordinate

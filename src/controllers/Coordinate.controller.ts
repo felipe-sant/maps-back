@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import Coordinateervice from "../services/Coordinate.service";
-import CoordinateType from "../types/Coordinate.type";
+import Coordinate from "../types/Coordinate.type";
+import CoordinateService from "../services/Coordinate.service";
 
 class CoordinateController {
-    private service: Coordinateervice
+    private service: CoordinateService
 
     constructor() {
-        this.service = new Coordinateervice()
+        this.service = new CoordinateService()
     }
 
     public async getRandomCoord(_: Request, res: Response): Promise<void> {
         try {
-            const randomCoord: CoordinateType = await this.service.getRandomCoord()
+            const randomCoord: Coordinate = await this.service.getCoord()
             res.status(200).json(randomCoord)
         } catch (error: unknown) {
             console.error("Error:", error)
