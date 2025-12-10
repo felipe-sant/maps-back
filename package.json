@@ -28,6 +28,8 @@
     "typescript-eslint": "^8.48.1"
   },
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^7.3.1",
+    "@turf/helpers": "^7.3.1",
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

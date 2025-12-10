@@ -3,6 +3,7 @@ import cors from 'cors'
 import requestLoggerMiddleware from './middlewares/requestLogger.middleware'
 import dotenv from "dotenv"
 import coordinateRoutes from './routes/Coordinate.routes'
+import localitiesRoutes from './routes/Localities.routes'
 
 dotenv.config()
 
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(requestLoggerMiddleware)
 
 app.use("/api", coordinateRoutes)
+app.use("/api", localitiesRoutes)
 app.use("/", (_: Request, res: Response) => res.sendStatus(404))
 
 export default app
