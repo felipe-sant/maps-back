@@ -1,14 +1,26 @@
+import { point } from "@turf/helpers"
 import UFs from "../const/UFs"
 import Coordinate from "../types/Coordinate.type"
-import { Feature } from "../types/GeoJson.type"
+import GeoJson, { Feature } from "../types/GeoJson.type"
 import getRandomState from "../utils/getRandomState"
 import IbgeAPI from "./api/Ibge.api"
+import booleanPointInPolygon from "@turf/boolean-point-in-polygon"
 
 class CoordinateService {
     private ibgeAPI: IbgeAPI
 
     constructor() {
         this.ibgeAPI = new IbgeAPI()
+    }
+
+    public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
+        const p = point([coordinate.lon, coordinate.lat])
+        const ufs: GeoJson = await this.ibgeAPI.getMalha()
+        for(const u of ufs.features) {
+            const inUf = booleanPointInPolygon(p, u.geometry)
+            if (inUf) return true
+        }
+        return false
     }
 
     private getRandomCoordPerStateObj(state: Feature): Coordinate {

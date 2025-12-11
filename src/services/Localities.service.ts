@@ -12,16 +12,6 @@ class LocalitiesService {
         this.ibgeAPI = new IbgeAPI()
     }
 
-    public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
-        const p = point([coordinate.lon, coordinate.lat])
-        const ufs: GeoJson = await this.ibgeAPI.getMalha()
-        for(const u of ufs.features) {
-            const inUf = booleanPointInPolygon(p, u.geometry)
-            if (inUf) return true
-        }
-        return false
-    }
-
     private async findMunicipioPerPoint(coordinate: Coordinate): Promise<number | undefined> {
         const p = point([coordinate.lon, coordinate.lat])
 

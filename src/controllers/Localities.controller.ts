@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import Coordinate from "../types/Coordinate.type";
 import LocalitiesService from "../services/Localities.service";
+import CoordinateService from "../services/Coordinate.service";
 
 class LocalitiesController {
     private service: LocalitiesService
+    private service_coord: CoordinateService
 
     constructor() {
         this.service = new LocalitiesService()
+        this.service_coord = new CoordinateService()
     }
 
     public async getInfoLocation(req: Request, res: Response) {
@@ -25,7 +28,7 @@ class LocalitiesController {
             }
 
             const coordinate: Coordinate = { lat: nLat, lon: nLon }
-            if (!await this.service.pointInBrazil(coordinate)) {
+            if (!await this.service_coord.pointInBrazil(coordinate)) {
                 res.status(422).json("The coordinates must be in Brazil.")
                 return
             }
