@@ -1,6 +1,7 @@
 import UFs from "../const/UFs"
 import Coordinate from "../types/Coordinate.type"
 import { Feature } from "../types/GeoJson.type"
+import getRandomState from "../utils/getRandomState"
 import IbgeAPI from "./api/Ibge.api"
 
 class CoordinateService {
@@ -10,12 +11,7 @@ class CoordinateService {
         this.ibgeAPI = new IbgeAPI()
     }
 
-    private getRandomState(): number {
-        const uf = UFs[Math.floor(Math.random() * UFs.length)]
-        return uf.codigo
-    }
-
-    private getRandomCoordPerState(state: Feature): Coordinate {
+    private getRandomCoordPerStateObj(state: Feature): Coordinate {
         let points: number[][]
 
         if (state.geometry.type === 'Polygon') {
@@ -36,15 +32,15 @@ class CoordinateService {
         }
     }
 
-    public async getCoord(codigo?: number): Promise<Coordinate> {
-        codigo = this.getRandomState()
+    public async getRandomCoord(codigo?: number): Promise<Coordinate> {
+        codigo = getRandomState()
 
         const state = await this.ibgeAPI.getMalhaPerUF(codigo)
 
         const feature = state.features[0]
         if (!feature) throw new Error("Nenhuma feature encontrada para essa UF")
 
-        return this.getRandomCoordPerState(feature)
+        return this.getRandomCoordPerStateObj(feature)
     }
 
 }

@@ -25,7 +25,7 @@ class CoordinateController {
                 }
             }
 
-            const randomCoord: Coordinate = await this.service.getCoord(codigo)
+            const randomCoord: Coordinate = await this.service.getRandomCoord(codigo)
             res.status(200).json(randomCoord)
         } catch (error: unknown) {
             console.error("Error:", error)
