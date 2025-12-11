@@ -2,6 +2,8 @@ import GeoJson from "../../types/GeoJson.type"
 import Info from "../../types/Info.type"
 import InfoBrute from "../../types/InfoBrute.type"
 import ReqFunc from "./__reqfunc"
+import readFile from "../../utils/readFile"
+import createFile from "../../utils/createFile"
 
 class IbgeAPI {
     private readonly url = 'https://servicodados.ibge.gov.br/api/'
@@ -10,8 +12,12 @@ class IbgeAPI {
     private readonly url_localidades = this.url + "v1/localidades/municipios/"
 
     public async getMalha(): Promise<GeoJson> {
-        // implementar sistema de cache aqui
-        // readFile() if else
+        const cache_url = ".cache/malha_ufs.json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
 
         const query = {
             formato: 'application/vnd.geo+json',
@@ -21,14 +27,18 @@ class IbgeAPI {
         const response = await ReqFunc.getReq<GeoJson>(this.url_malhas_pais + "BR", query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar malha por país")
 
-        // createFile()
+        createFile(cache_url, JSON.stringify(response.content))
 
         return response.content
     }
 
     public async getMalhaPerUF(uf: number): Promise<GeoJson> {
-        // implementar sistema de cache aqui
-        // readFile() if else
+        const cache_url = ".cache/malha_uf_" + uf + ".json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
 
         const query = {
             formato: 'application/vnd.geo+json',
@@ -37,14 +47,18 @@ class IbgeAPI {
         const response = await ReqFunc.getReq<GeoJson>(this.url_malhas_uf + uf, query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar malha por uf")
 
-        // createFile()
+        createFile(cache_url, JSON.stringify(response.content))
 
         return response.content
     }
 
     public async getMalhaMunicipioPerUF(uf: number): Promise<GeoJson> {
-        // implementar sistema de cache aqui
-        // readFile() if else
+        const cache_url = ".cache/malha_municipios_" + uf + ".json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
 
         const query = {
             formato: 'application/vnd.geo+json',
@@ -53,15 +67,19 @@ class IbgeAPI {
         }
         const response = await ReqFunc.getReq<GeoJson>(this.url_malhas_uf + uf, query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar malha de municipio por uf")
-            
-        // createFile()
-        
+
+        createFile(cache_url, JSON.stringify(response.content))
+
         return response.content
     }
 
     public async getLocalidadePerMunicipio(municipio: number): Promise<Info> {
-        // implementar sistema de cache aqui
-        // readFile() if else
+        const cache_url = ".cache/localidade_municipio_" + municipio + ".json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
 
         const query = {
             view: "nivelado"
@@ -69,13 +87,13 @@ class IbgeAPI {
         const response = await ReqFunc.getReq<InfoBrute>(this.url_localidades + municipio, query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informações por municipio")
 
-        // createFile()
-
         const info: Info = {
             municipio: response.content["municipio-nome"],
             estado: response.content["UF-nome"],
             regiao: response.content["regiao-nome"]
         }
+
+        createFile(cache_url, JSON.stringify(info))
 
         return info
     }
