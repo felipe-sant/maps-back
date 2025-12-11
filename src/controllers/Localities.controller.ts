@@ -25,6 +25,11 @@ class LocalitiesController {
             }
 
             const coordinate: Coordinate = { lat: nLat, lon: nLon }
+            if (!await this.service.pointInBrazil(coordinate)) {
+                res.status(422).json("The coordinates must be in Brazil.")
+                return
+            }
+            
             const info = await this.service.getInfo(coordinate)
             res.status(200).json(info)
         } catch (error: unknown) {

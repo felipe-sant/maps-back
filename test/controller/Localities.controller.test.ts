@@ -18,6 +18,16 @@ describe("Test Localities.controller", () => {
         expect(response.status).toBe(400)
     })
 
+    it("GET | /api/location - Unprocessable Entity", async () => {
+        const url = "/api/location"
+        const q = {
+            lat: 0,
+            lon: 0
+        }
+        const response = await request(app).get(url).query(q)
+        expect(response.status).toBe(422)
+    })
+
     it("GET | /api/location - OK", async () => {
         const url = "/api/location"
         const q = {
