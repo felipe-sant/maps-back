@@ -8,7 +8,7 @@ describe("Test Localities.controller", () => {
         expect(response.status).toBe(400)
     })
 
-    it("GET | /api/location - Bad Request", async () => {
+    it("GET | /api/location?lat=lat&lon=lon - Bad Request", async () => {
         const url = "/api/location"
         const q = {
             lat: "lat",
@@ -18,7 +18,7 @@ describe("Test Localities.controller", () => {
         expect(response.status).toBe(400)
     })
 
-    it("GET | /api/location - Unprocessable Entity", async () => {
+    it("GET | /api/location?lat=0&lon=0 - Unprocessable Entity", async () => {
         const url = "/api/location"
         const q = {
             lat: 0,
@@ -28,11 +28,23 @@ describe("Test Localities.controller", () => {
         expect(response.status).toBe(422)
     })
 
+    it("GET | /api/location - Bad Request", async () => {
+        const url = "/api/location"
+        const q = {
+            lat: -23.2237,
+            lon: -45.9009,
+            ano: "1900"
+        }
+        const response = await request(app).get(url).query(q)
+        expect(response.status).toBe(400)
+    })
+
     it("GET | /api/location - OK", async () => {
         const url = "/api/location"
         const q = {
             lat: -23.2237,
-            lon: -45.9009
+            lon: -45.9009,
+            ano: "2025"
         }
         const response = await request(app).get(url).query(q)
         expect(response.status).toBe(200)
