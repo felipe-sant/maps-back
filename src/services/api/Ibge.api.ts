@@ -4,12 +4,15 @@ import InfoBrute from "../../types/InfoBrute.type"
 import ReqFunc from "./__reqfunc"
 import readFile from "../../utils/readFile"
 import createFile from "../../utils/createFile"
+import PopulacaoBrute from "../../types/PopulacaoBrute.type"
+import Populacao from "../../types/Populacao.type"
 
 class IbgeAPI {
     private readonly url = 'https://servicodados.ibge.gov.br/api/'
     private readonly url_malhas_uf = this.url + "v4/malhas/estados/"
     private readonly url_malhas_pais = this.url + "v4/malhas/paises/"
     private readonly url_localidades = this.url + "v1/localidades/municipios/"
+    private readonly url_populacao = this.url + "v3/agregados/6579/periodos/"
 
     public async getMalha(): Promise<GeoJson> {
         const cache_url = ".cache/malha_ufs.json"
@@ -85,7 +88,7 @@ class IbgeAPI {
             view: "nivelado"
         }
         const response = await ReqFunc.getReq<InfoBrute>(this.url_localidades + municipio, query)
-        if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informações por municipio")
+        if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informações de municipio")
 
         const info: Info = {
             municipio: response.content["municipio-nome"],
@@ -96,6 +99,24 @@ class IbgeAPI {
         createFile(cache_url, JSON.stringify(info))
 
         return info
+    }
+
+    public async getPopulacao(periodo: string): Promise<Populacao> {
+        const url = this.url_populacao + periodo + "/variaveis"
+        const query = {
+            localidades: "N1",
+            view: "flat"
+        }
+        const response = await ReqFunc.getReq<PopulacaoBrute[]>(url, query)
+        if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informação de população geral")
+
+        const populacaoBrute: PopulacaoBrute = response.content[1]
+        const populacao: Populacao = {
+            ano: populacaoBrute.D2N,
+            valor: Number(populacaoBrute.V)
+        } 
+
+        return populacao
     }
 }
 
