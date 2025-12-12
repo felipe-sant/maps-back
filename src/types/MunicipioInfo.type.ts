@@ -1,7 +1,7 @@
-type Info = {
+type MunicipioInfo = {
     municipio: string
     estado: string
     regiao: string
 }
 
-export default Info
+export default MunicipioInfo

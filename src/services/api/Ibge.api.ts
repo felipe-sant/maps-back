@@ -1,18 +1,19 @@
 import GeoJson from "../../types/GeoJson.type"
-import Info from "../../types/Info.type"
-import InfoBrute from "../../types/InfoBrute.type"
 import ReqFunc from "./__reqfunc"
 import readFile from "../../utils/readFile"
 import createFile from "../../utils/createFile"
-import PopulacaoBrute from "../../types/PopulacaoBrute.type"
-import Populacao from "../../types/Populacao.type"
+import MunicipioInfo_brute from "../../types/MunicipioInfo_brute.type"
+import MunicipioInfo from "../../types/MunicipioInfo.type"
+import PopulacaoInfo_brute from "../../types/PopulacaoInfo_brute.type"
+import PopulacaoInfo from "../../types/PopulacaoInfo.type"
+import Periodo from "../../types/Periodo.type"
 
 class IbgeAPI {
     private readonly url = 'https://servicodados.ibge.gov.br/api/'
     private readonly url_malhas_uf = this.url + "v4/malhas/estados/"
     private readonly url_malhas_pais = this.url + "v4/malhas/paises/"
     private readonly url_localidades = this.url + "v1/localidades/municipios/"
-    private readonly url_populacao = this.url + "v3/agregados/6579/periodos/"
+    private readonly url_populacao = this.url + "v3/agregados/6579/periodos/all/variaveis"
 
     public async getMalha(): Promise<GeoJson> {
         const cache_url = ".cache/malha_ufs.json"
@@ -76,7 +77,7 @@ class IbgeAPI {
         return response.content
     }
 
-    public async getLocalidadePerMunicipio(municipio: number): Promise<Info> {
+    public async getLocalidadePerMunicipio(municipio: number): Promise<MunicipioInfo> {
         const cache_url = ".cache/localidade_municipio_" + municipio + ".json"
 
         const file = readFile(cache_url)
@@ -87,10 +88,10 @@ class IbgeAPI {
         const query = {
             view: "nivelado"
         }
-        const response = await ReqFunc.getReq<InfoBrute>(this.url_localidades + municipio, query)
+        const response = await ReqFunc.getReq<MunicipioInfo_brute>(this.url_localidades + municipio, query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informações de municipio")
 
-        const info: Info = {
+        const info: MunicipioInfo = {
             municipio: response.content["municipio-nome"],
             estado: response.content["UF-nome"],
             regiao: response.content["regiao-nome"]
@@ -101,22 +102,40 @@ class IbgeAPI {
         return info
     }
 
-    public async getPopulacao(periodo: string): Promise<Populacao> {
-        const url = this.url_populacao + periodo + "/variaveis"
+    public async getPopulacaoPerMunicipio(municipio: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
         const query = {
-            localidades: "N1",
+            localidades: `N6[${municipio}]`,
             view: "flat"
         }
-        const response = await ReqFunc.getReq<PopulacaoBrute[]>(url, query)
+        const response = await ReqFunc.getReq<PopulacaoInfo_brute[]>(this.url_populacao, query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informação de população geral")
 
-        const populacaoBrute: PopulacaoBrute = response.content[1]
-        const populacao: Populacao = {
-            ano: populacaoBrute.D2N,
-            valor: Number(populacaoBrute.V)
-        } 
+        const populacaoBrute: PopulacaoInfo_brute[] = response.content
+        const infoPopulacao: PopulacaoInfo[] = []
 
-        return populacao
+        let isFirst = true
+        populacaoBrute.forEach(p => {
+            if (isFirst) {
+                isFirst = false
+                return
+            }
+
+            const formatInfoPopulacao = {
+                valor: Number(p.V),
+                ano: p.D2C
+            }
+
+            if (periodo) {
+                if (p.D2C === periodo) {
+                    infoPopulacao.push(formatInfoPopulacao)
+                }
+            } else {
+                infoPopulacao.push(formatInfoPopulacao)
+            }
+            
+        })
+
+        return infoPopulacao
     }
 }
 

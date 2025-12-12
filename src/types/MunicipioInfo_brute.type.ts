@@ -1,4 +1,4 @@
-type InfoBrute = {
+type MunicipioInfo_brute = {
     "municipio-id": number
     "municipio-nome": string
     "microrregiao-id": number
@@ -17,4 +17,4 @@ type InfoBrute = {
     "regiao-nome": string
 }
 
-export default InfoBrute
+export default MunicipioInfo_brute

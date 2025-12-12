@@ -1,4 +1,4 @@
-type PopulacaoBrute = {
+type PopulacaoInfo_brute = {
     NC: string      // Nível Territorial (Código)
     NN: string      // Nível Territorial
     MC: string      // Unidade de Medida (Código)
@@ -12,4 +12,4 @@ type PopulacaoBrute = {
     D3N: string     // Variável
 }
 
-export default PopulacaoBrute
+export default PopulacaoInfo_brute
