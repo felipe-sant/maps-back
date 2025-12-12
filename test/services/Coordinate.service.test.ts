@@ -4,7 +4,7 @@ import Coordinate from "../../src/types/Coordinate.type"
 describe("Test Coordinate.service", () => {
     const service = new CoordinateService()
 
-    it("CoordinateService.pointInBrazil", async () => {
+    it("CoordinateService.pointInBrazil(coordinate)", async () => {
         const res: boolean[] = []
 
         const inBrazil: Coordinate = { lat: -15.7934, lon: -47.8825 }
@@ -16,7 +16,7 @@ describe("Test Coordinate.service", () => {
         expect(res).toEqual([true, false])
     })
 
-    it("CoordinateService.pointInState", async () => {
+    it("CoordinateService.pointInState(coordinate, ufcode)", async () => {
         const res: boolean[] = []
 
         const inDF: Coordinate = { lat: -15.7934, lon: -47.8825 }
@@ -26,5 +26,18 @@ describe("Test Coordinate.service", () => {
         res.push(await service.pointInState(notInDF, 53)) // return false
 
         expect(res).toEqual([true, false])
+    })
+
+    it("CoodinateService.getRandomCoord()", async () => {
+        const randomCord = await service.getRandomCoord()
+        const inBrazil = await service.pointInBrazil(randomCord)
+        expect(inBrazil).toEqual(true)
+    })
+
+    it("CoordinateService.getRandomCoord(53)", async () => {
+        const randomCoord = await service.getRandomCoord(53)
+        console.log(randomCoord)
+        const inDF = await service.pointInState(randomCoord, 53)
+        expect(inDF).toEqual(true)
     })
 })

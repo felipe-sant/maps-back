@@ -55,7 +55,7 @@ class CoordinateService {
     }
 
     public async getRandomCoord(codigo?: number): Promise<Coordinate> {
-        codigo = getRandomState()
+        codigo = codigo ? codigo : getRandomState()
 
         const state = await this.ibgeAPI.getMalhaPerUF(codigo)
 

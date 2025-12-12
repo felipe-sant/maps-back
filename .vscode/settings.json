@@ -10,5 +10,6 @@
         "package.json": false,
         "tsconfig.json": true,
         "LICENSE": true,
+        ".github/": true
     }
 }
