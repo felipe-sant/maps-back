@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node out/src/index.js",
     "build": "tsc -p tsconfig.json --outDir out",
-    "dev": "nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
+    "dev": "DOTENV_CONFIG_QUIET=true nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
     "lint": "eslint . --ext .ts",
     "test": "jest"
   },
