@@ -13,16 +13,6 @@ class CoordinateService {
         this.ibgeAPI = new IbgeAPI()
     }
 
-    public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
-        const p = point([coordinate.lon, coordinate.lat])
-        const ufs: GeoJson = await this.ibgeAPI.getMalha()
-        for(const u of ufs.features) {
-            const inUf = booleanPointInPolygon(p, u.geometry)
-            if (inUf) return true
-        }
-        return false
-    }
-
     private getRandomCoordPerStateObj(state: Feature): Coordinate {
         let points: number[][]
 
@@ -42,6 +32,26 @@ class CoordinateService {
             lat: randomPoint[1],
             lon: randomPoint[0],
         }
+    }
+
+    public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
+        const p = point([coordinate.lon, coordinate.lat])
+        const ufs: GeoJson = await this.ibgeAPI.getMalha()
+        for(const u of ufs.features) {
+            const inUf = booleanPointInPolygon(p, u.geometry)
+            if (inUf) return true
+        }
+        return false
+    }
+
+    public async pointInState(coordinate: Coordinate, code: number): Promise<boolean> {
+        const p = point([coordinate.lon, coordinate.lat])
+        const uf: GeoJson = await this.ibgeAPI.getMalhaMunicipioPerUF(code)
+        for(const m of uf.features) {
+            const inMun = booleanPointInPolygon(p, m.geometry)
+            if (inMun) return true
+        }
+        return false
     }
 
     public async getRandomCoord(codigo?: number): Promise<Coordinate> {
