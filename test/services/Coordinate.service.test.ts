@@ -36,7 +36,6 @@ describe("Test Coordinate.service", () => {
 
     it("CoordinateService.getRandomCoord(53)", async () => {
         const randomCoord = await service.getRandomCoord(53)
-        console.log(randomCoord)
         const inDF = await service.pointInState(randomCoord, 53)
         expect(inDF).toEqual(true)
     })
