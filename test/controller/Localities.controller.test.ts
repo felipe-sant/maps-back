@@ -56,10 +56,10 @@ describe("Test Localities.controller", () => {
         expect(response.status).toBe(400)
     })
 
-    it("GET | /api/location/info/population/1234 - Internal Server Error", async () => {
+    it("GET | /api/location/info/population/1234 - Bad Request", async () => {
         const url = "/api/location/info/population/1234"
         const response = await request(app).get(url)
-        expect(response.status).toBe(500)
+        expect(response.status).toBe(400)
     })
 
     it("GET | /api/location/info/population/3549904 - OK", async () => {

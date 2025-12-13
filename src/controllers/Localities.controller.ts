@@ -4,7 +4,6 @@ import LocalitiesService from "../services/Localities.service";
 import CoordinateService from "../services/Coordinate.service";
 import Periodo from "../types/Periodo.type";
 import Anos from "../const/Anos";
-import { json } from "stream/consumers";
 
 class LocalitiesController {
     private service: LocalitiesService
@@ -69,6 +68,12 @@ class LocalitiesController {
             const code = Number(codearea)
             if(isNaN(code)) {
                 res.status(400).json("'codearea' must be a number")
+                return
+            }
+
+            const isValidCode = await this.service.isValidCodearea(code)
+            if (!isValidCode) {
+                res.status(400).json("'codearea' does not belong to a municipality")
                 return
             }
 

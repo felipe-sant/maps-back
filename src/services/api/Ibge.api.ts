@@ -78,7 +78,7 @@ class IbgeAPI {
         return response.content
     }
 
-    public async getLocalidadePerMunicipio(municipio: number): Promise<MunicipioInfo> {
+    public async getLocalidadePerMunicipio(municipio: number): Promise<MunicipioInfo | undefined> {
         const cache_url = ".cache/localidade_municipio_" + municipio + ".json"
 
         const file = readFile(cache_url)
@@ -89,7 +89,10 @@ class IbgeAPI {
         const query = {
             view: "nivelado"
         }
-        const response = await ReqFunc.getReq<MunicipioInfo_brute>(this.url_localidades + municipio, query)
+        const response = await ReqFunc.getReq<MunicipioInfo_brute | []>(this.url_localidades + municipio, query)
+        if (Array.isArray(response.content)) {
+            return undefined
+        }
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informações de municipio")
 
         const info: MunicipioInfo = {

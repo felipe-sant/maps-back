@@ -34,6 +34,15 @@ class LocalitiesService {
         return undefined
     }
 
+    public async isValidCodearea(codearea: number): Promise<boolean> {
+        const infoLocalidade = await this.ibgeAPI.getLocalidadePerMunicipio(codearea)
+        if (!infoLocalidade) {
+            return false
+        } else {
+            return true
+        }
+    }
+
 
     public async getInfoPopulacaoPerMunicipio(codearea: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
         const infoPopulacao = await this.ibgeAPI.getPopulacaoPerMunicipio(codearea, periodo)
@@ -45,6 +54,8 @@ class LocalitiesService {
         if (!codearea) throw new Error("Nenhum código de area encontrado nesse ponto")
 
         const infoLocalidade = await this.ibgeAPI.getLocalidadePerMunicipio(codearea)
+        if (!infoLocalidade) throw new Error("O municipio não foi encontrado")
+
         const infoPopulacao = await this.ibgeAPI.getPopulacaoPerMunicipio(codearea, periodo)
 
         return { localidade: infoLocalidade, populacao: infoPopulacao }
