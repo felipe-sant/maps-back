@@ -103,6 +103,13 @@ class IbgeAPI {
     }
 
     public async getPopulacaoPerMunicipio(municipio: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
+        const cache_url = periodo ? ".cache/populacao_municipio_" + municipio + "_" + periodo + ".json" : ".cache/populacao_municipio_" + municipio + ".json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
+        
         const query = {
             localidades: `N6[${municipio}]`,
             view: "flat"
@@ -134,6 +141,8 @@ class IbgeAPI {
             }
             
         })
+
+        createFile(cache_url, JSON.stringify(infoPopulacao))
 
         return infoPopulacao
     }

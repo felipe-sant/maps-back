@@ -9,6 +9,7 @@ const config: Config = {
   transform: {
     ...tsJestTransformCfg,
   },
+  testTimeout: 30000,
   setupFiles: [path.resolve(__dirname, "test/setup.ts")],
 }
 
