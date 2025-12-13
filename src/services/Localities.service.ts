@@ -34,7 +34,13 @@ class LocalitiesService {
         return undefined
     }
 
-    public async getInfo(coordinate: Coordinate, periodo?: Periodo): Promise<{ localidade: MunicipioInfo, populacao: PopulacaoInfo[] }> {
+
+    public async getInfoPopulacaoPerMunicipio(codearea: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
+        const infoPopulacao = await this.ibgeAPI.getPopulacaoPerMunicipio(codearea, periodo)
+        return infoPopulacao
+    }
+
+    public async getInfo(coordinate: Coordinate, periodo?: Periodo): Promise<{ localidade: MunicipioInfo, populacao: PopulacaoInfo[] } | undefined> {
         const codearea = await this.findMunicipioPerPoint(coordinate)
         if (!codearea) throw new Error("Nenhum código de area encontrado nesse ponto")
 

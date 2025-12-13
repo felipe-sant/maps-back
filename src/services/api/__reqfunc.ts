@@ -13,8 +13,7 @@ class ReqFunc {
                 },
             })
             return { status: response.status, content: response.data }
-        } catch (error: any) {
-            console.error("Erro:", error)
+        } catch (error: any) {      
             return { status: 500, content: error.response?.data?.error || error.message || 'Erro desconhecido' }
         }
     }

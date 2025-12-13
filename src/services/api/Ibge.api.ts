@@ -7,6 +7,7 @@ import MunicipioInfo from "../../types/MunicipioInfo.type"
 import PopulacaoInfo_brute from "../../types/PopulacaoInfo_brute.type"
 import PopulacaoInfo from "../../types/PopulacaoInfo.type"
 import Periodo from "../../types/Periodo.type"
+import ErrorIbgeResponse from "../../types/ErrorResponse.type"
 
 class IbgeAPI {
     private readonly url = 'https://servicodados.ibge.gov.br/api/'

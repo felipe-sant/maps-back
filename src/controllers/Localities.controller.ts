@@ -4,6 +4,7 @@ import LocalitiesService from "../services/Localities.service";
 import CoordinateService from "../services/Coordinate.service";
 import Periodo from "../types/Periodo.type";
 import Anos from "../const/Anos";
+import { json } from "stream/consumers";
 
 class LocalitiesController {
     private service: LocalitiesService
@@ -54,6 +55,24 @@ class LocalitiesController {
             const info = await this.service.getInfo(coordinate, periodo)
 
             res.status(200).json(info)
+        } catch (error: unknown) {
+            console.error("Error:", error)
+            res.sendStatus(500)
+        }
+    }
+
+    public async getPopulacao(req: Request, res: Response) {
+        try {
+            const { codearea } = req.params
+
+            const code = Number(codearea)
+            if(isNaN(code)) {
+                res.status(400).json("'codearea' must be a number")
+                return
+            }
+
+            const populacao = await this.service.getInfoPopulacaoPerMunicipio(code)
+            res.status(200).json(populacao)
         } catch (error: unknown) {
             console.error("Error:", error)
             res.sendStatus(500)
