@@ -8,12 +8,15 @@ import PopulacaoInfo_brute from "../../types/PopulacaoInfo_brute.type"
 import PopulacaoInfo from "../../types/PopulacaoInfo.type"
 import Periodo from "../../types/Periodo.type"
 import ErrorIbgeResponse from "../../types/ErrorResponse.type"
+import EstadoInfo from "../../types/EstadoInfo.type"
+import EstadoInfo_brute from "../../types/EstadoInfo_brute.type"
 
 class IbgeAPI {
     private readonly url = 'https://servicodados.ibge.gov.br/api/'
     private readonly url_malhas_uf = this.url + "v4/malhas/estados/"
     private readonly url_malhas_pais = this.url + "v4/malhas/paises/"
-    private readonly url_localidades = this.url + "v1/localidades/municipios/"
+    private readonly url_localidades_municipios = this.url + "v1/localidades/municipios/"
+    private readonly url_localidades_estados = this.url + "v1/localidades/estados/"
     private readonly url_populacao = this.url + "v3/agregados/6579/periodos/all/variaveis"
 
     public async getMalha(): Promise<GeoJson> {
@@ -89,13 +92,14 @@ class IbgeAPI {
         const query = {
             view: "nivelado"
         }
-        const response = await ReqFunc.getReq<MunicipioInfo_brute | []>(this.url_localidades + municipio, query)
+        const response = await ReqFunc.getReq<MunicipioInfo_brute | []>(this.url_localidades_municipios + municipio, query)
         if (Array.isArray(response.content)) {
             return undefined
         }
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar informações de municipio")
 
         const info: MunicipioInfo = {
+            codearea: response.content["municipio-id"],
             municipio: response.content["municipio-nome"],
             estado: response.content["UF-nome"],
             regiao: response.content["regiao-nome"]
@@ -106,16 +110,43 @@ class IbgeAPI {
         return info
     }
 
-    public async getPopulacaoPerMunicipio(municipio: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
-        const cache_url = periodo ? ".cache/populacao_municipio_" + municipio + "_" + periodo + ".json" : ".cache/populacao_municipio_" + municipio + ".json"
+    public async getLocalidadePerEstado(estado: number): Promise<EstadoInfo | undefined> {
+        const cache_url = ".cache/localidade_estado_" + estado + ".json"
 
         const file = readFile(cache_url)
         if (file) {
             return JSON.parse(file)
         }
+
+        const response  = await ReqFunc.getReq<EstadoInfo_brute | []>(this.url_localidades_estados + estado)
+        if(Array.isArray(response.content)) {
+            return undefined
+        }
+
+        const info: EstadoInfo = {
+            codearea: response.content.id,
+            sigla: response.content.sigla,
+            estado: response.content.nome,
+            regiao: response.content.regiao.nome
+        }
+
+        createFile(cache_url, JSON.stringify(info))
+
+        return info
+    }
+
+    public async getPopulacaoPerCode(code: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
+        const cache_url = periodo ? ".cache/populacao_" + code + "_" + periodo + ".json" : ".cache/populacao_" + code + ".json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
+
+        const codeLen = String(code).length
         
         const query = {
-            localidades: `N6[${municipio}]`,
+            localidades: codeLen === 2 ? `N3[${code}]` : `N6[${code}]`,
             view: "flat"
         }
         const response = await ReqFunc.getReq<PopulacaoInfo_brute[]>(this.url_populacao, query)

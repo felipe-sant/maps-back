@@ -85,4 +85,13 @@ describe("Test Localities.controller", () => {
         const response = await request(app).get(url).query(q)
         expect(response.status).toBe(200)
     })
+
+    it("GET '/api/location/info/population/13 - OK'", async () => {
+        const url = "/api/location/info/population/13"
+        const q = {
+            ano: 2025
+        }
+        const response = await request(app).get(url).query(q)
+        expect(response.status).toBe(200)
+    })
 })

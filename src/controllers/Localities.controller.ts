@@ -43,7 +43,7 @@ class LocalitiesController {
                         valid = true
                     }
                 })
-                if(!valid) {
+                if (!valid) {
                     res.status(400).json("The valid years are '2001', '2002', '2003', '2004', '2005', '2006', '2008', '2009', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2024', '2025'")
                     return
                 } else {
@@ -65,18 +65,6 @@ class LocalitiesController {
             const { codearea } = req.params
             const { ano } = req.query
 
-            const code = Number(codearea)
-            if(isNaN(code)) {
-                res.status(400).json("'codearea' must be a number")
-                return
-            }
-
-            const isValidCode = await this.service.isValidCodearea(code)
-            if (!isValidCode) {
-                res.status(400).json("'codearea' does not belong to a municipality")
-                return
-            }
-
             let periodo: Periodo | undefined
             if (ano) {
                 let valid = false
@@ -85,7 +73,7 @@ class LocalitiesController {
                         valid = true
                     }
                 })
-                if(!valid) {
+                if (!valid) {
                     res.status(400).json("The valid years are '2001', '2002', '2003', '2004', '2005', '2006', '2008', '2009', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2024', '2025'")
                     return
                 } else {
@@ -93,7 +81,31 @@ class LocalitiesController {
                 }
             }
 
-            const populacao = await this.service.getInfoPopulacaoPerMunicipio(code, periodo)
+            const code = Number(codearea)
+            if (isNaN(code)) {
+                res.status(400).json("'codearea' must be a number")
+                return
+            }
+
+            const codeLen = String(code).length
+
+            if (codeLen === 2) {
+                const isValidCode = await this.service.isValidCodeareaState(code)
+                if (!isValidCode) {
+                    res.status(400).json("'codearea' does not belong to a state")
+                    return
+                }
+            } else if (codeLen === 7) {
+                const isValidCode = await this.service.isValidCodeareaMunicipio(code)
+                if (!isValidCode) {
+                    res.status(400).json("'codearea' does not belong to a municipality")
+                    return
+                }
+            } else {
+                res.status(400).json("'codearea' does not belong to a municipality")
+                return
+            }
+            const populacao = await this.service.getInfoPopulacaoPerCode(code, periodo)
             res.status(200).json(populacao)
         } catch (error: unknown) {
             console.error("Error:", error)

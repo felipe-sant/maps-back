@@ -7,7 +7,7 @@ describe("Test Localities.service", () => {
     const service = new LocalitiesService()
 
     it("LocalitiesService.getInfoPopulacaoPerMunicipio(codearea, periodo)", async () => {
-        const info = await service.getInfoPopulacaoPerMunicipio(3549904, "2021")
+        const info = await service.getInfoPopulacaoPerCode(3549904, "2021")
         const expectInfo = [{"valor":737310,"ano":"2021"}]
         expect(info).toEqual(expectInfo)
     })
@@ -18,6 +18,7 @@ describe("Test Localities.service", () => {
 
         const expectInfo: { localidade: MunicipioInfo, populacao: PopulacaoInfo[] } = {
             "localidade": {
+                "codearea": 3549904,
                 "municipio": "São José dos Campos",
                 "estado": "São Paulo",
                 "regiao": "Sudeste"
