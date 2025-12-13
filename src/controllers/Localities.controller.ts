@@ -64,6 +64,7 @@ class LocalitiesController {
     public async getPopulacao(req: Request, res: Response) {
         try {
             const { codearea } = req.params
+            const { ano } = req.query
 
             const code = Number(codearea)
             if(isNaN(code)) {
@@ -71,7 +72,23 @@ class LocalitiesController {
                 return
             }
 
-            const populacao = await this.service.getInfoPopulacaoPerMunicipio(code)
+            let periodo: Periodo | undefined
+            if (ano) {
+                let valid = false
+                Anos.forEach(a => {
+                    if (ano === a) {
+                        valid = true
+                    }
+                })
+                if(!valid) {
+                    res.status(400).json("The valid years are '2001', '2002', '2003', '2004', '2005', '2006', '2008', '2009', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2024', '2025'")
+                    return
+                } else {
+                    periodo = ano as Periodo
+                }
+            }
+
+            const populacao = await this.service.getInfoPopulacaoPerMunicipio(code, periodo)
             res.status(200).json(populacao)
         } catch (error: unknown) {
             console.error("Error:", error)

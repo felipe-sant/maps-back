@@ -49,4 +49,40 @@ describe("Test Localities.controller", () => {
         const response = await request(app).get(url).query(q)
         expect(response.status).toBe(200)
     })
+
+    it("GET | /api/location/info/population/not_a_number - Bad Request", async () => {
+        const url = "/api/location/info/population/not_a_number"
+        const response = await request(app).get(url)
+        expect(response.status).toBe(400)
+    })
+
+    it("GET | /api/location/info/population/1234 - Internal Server Error", async () => {
+        const url = "/api/location/info/population/1234"
+        const response = await request(app).get(url)
+        expect(response.status).toBe(500)
+    })
+
+    it("GET | /api/location/info/population/3549904 - OK", async () => {
+        const url = "/api/location/info/population/3549904"
+        const response = await request(app).get(url)
+        expect(response.status).toBe(200)
+    })
+
+    it("GET | /api/location/info/population/3549904?ano=1900 - Bad Request", async () => {
+        const url = "/api/location/info/population/3549904"
+        const q = {
+            ano: 1900
+        }
+        const response = await request(app).get(url).query(q)
+        expect(response.status).toBe(400)
+    })
+
+    it("GET | /api/location/info/population/3549904?ano=2025 - OK", async () => {
+        const url = "/api/location/info/population/3549904"
+        const q = {
+            ano: 2025
+        }
+        const response = await request(app).get(url).query(q)
+        expect(response.status).toBe(200)
+    })
 })

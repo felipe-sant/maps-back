@@ -6,6 +6,12 @@ import PopulacaoInfo from "../../src/types/PopulacaoInfo.type"
 describe("Test Localities.service", () => {
     const service = new LocalitiesService()
 
+    it("LocalitiesService.getInfoPopulacaoPerMunicipio(codearea, periodo)", async () => {
+        const info = await service.getInfoPopulacaoPerMunicipio(3549904, "2021")
+        const expectInfo = [{"valor":737310,"ano":"2021"}]
+        expect(info).toEqual(expectInfo)
+    })
+
     it("LocalitiesService.getInfo(coordinate, periodo)", async () => {
         const coord: Coordinate = { lat: -23.2237, lon: -45.9009 }
         const info = await service.getInfo(coord, "2021")
