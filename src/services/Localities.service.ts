@@ -14,10 +14,10 @@ class LocalitiesService {
         this.ibgeAPI = new IbgeAPI()
     }
 
-    private async findMunicipioPerPoint(coordinate: Coordinate): Promise<number | undefined> {
+    public async findMunicipioPerPoint(coordinate: Coordinate): Promise<number | undefined> {
         const p = point([coordinate.lon, coordinate.lat])
 
-        const ufs: GeoJson = await this.ibgeAPI.getMalha()
+        const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs()
         for (const u of ufs.features) {
             const inUf = booleanPointInPolygon(p, u.geometry)
             if (!inUf) continue
@@ -34,22 +34,18 @@ class LocalitiesService {
         return undefined
     }
 
-    public async isValidCodeareaMunicipio(codearea: number): Promise<boolean> {
-        const infoLocalidade = await this.ibgeAPI.getLocalidadePerMunicipio(codearea)
-        if (!infoLocalidade) {
-            return false
-        } else {
-            return true
-        }
-    }
+    public async findStatePerPoint(coordinate: Coordinate): Promise<number | undefined> {
+        const p = point([coordinate.lon, coordinate.lat])
 
-    public async isValidCodeareaState(codearea: number): Promise<boolean> {
-        const infoLocalidade = await this.ibgeAPI.getLocalidadePerEstado(codearea)
-        if (!infoLocalidade) {
-            return false
-        } else {
-            return true
+        const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs()
+        for (const u of ufs.features) {
+            const inUf = booleanPointInPolygon(p, u.geometry)
+            if (!inUf) continue
+
+            return Number(u.properties.codarea)
         }
+
+        return undefined
     }
 
     public async getInfoPopulacaoPerCode(codearea: number, periodo?: Periodo): Promise<PopulacaoInfo[]> {
@@ -57,16 +53,14 @@ class LocalitiesService {
         return infoPopulacao
     }
 
-    public async getInfo(coordinate: Coordinate, periodo?: Periodo): Promise<{ localidade: MunicipioInfo, populacao: PopulacaoInfo[] } | undefined> {
+    public async getInfo(coordinate: Coordinate): Promise<MunicipioInfo| undefined> {
         const codearea = await this.findMunicipioPerPoint(coordinate)
         if (!codearea) throw new Error("Nenhum código de area encontrado nesse ponto")
 
         const infoLocalidade = await this.ibgeAPI.getLocalidadePerMunicipio(codearea)
         if (!infoLocalidade) throw new Error("O municipio não foi encontrado")
 
-        const infoPopulacao = await this.ibgeAPI.getPopulacaoPerCode(codearea, periodo)
-
-        return { localidade: infoLocalidade, populacao: infoPopulacao }
+        return infoLocalidade
     }
 }
 

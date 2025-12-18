@@ -19,7 +19,7 @@ class IbgeAPI {
     private readonly url_localidades_estados = this.url + "v1/localidades/estados/"
     private readonly url_populacao = this.url + "v3/agregados/6579/periodos/all/variaveis"
 
-    public async getMalha(): Promise<GeoJson> {
+    public async getMalhaUFs(): Promise<GeoJson> {
         const cache_url = ".cache/malha_ufs.json"
 
         const file = readFile(cache_url)
@@ -81,6 +81,31 @@ class IbgeAPI {
         return response.content
     }
 
+    public async getLocalidadePerEstado(estado: number): Promise<EstadoInfo | undefined> {
+        const cache_url = ".cache/localidade_estado_" + estado + ".json"
+
+        const file = readFile(cache_url)
+        if (file) {
+            return JSON.parse(file)
+        }
+
+        const response  = await ReqFunc.getReq<EstadoInfo_brute | []>(this.url_localidades_estados + estado)
+        if(Array.isArray(response.content)) {
+            return undefined
+        }
+
+        const info: EstadoInfo = {
+            codearea: response.content.id,
+            sigla: response.content.sigla,
+            estado: response.content.nome,
+            regiao: response.content.regiao.nome
+        }
+
+        createFile(cache_url, JSON.stringify(info))
+
+        return info
+    }
+
     public async getLocalidadePerMunicipio(municipio: number): Promise<MunicipioInfo | undefined> {
         const cache_url = ".cache/localidade_municipio_" + municipio + ".json"
 
@@ -103,31 +128,6 @@ class IbgeAPI {
             municipio: response.content["municipio-nome"],
             estado: response.content["UF-nome"],
             regiao: response.content["regiao-nome"]
-        }
-
-        createFile(cache_url, JSON.stringify(info))
-
-        return info
-    }
-
-    public async getLocalidadePerEstado(estado: number): Promise<EstadoInfo | undefined> {
-        const cache_url = ".cache/localidade_estado_" + estado + ".json"
-
-        const file = readFile(cache_url)
-        if (file) {
-            return JSON.parse(file)
-        }
-
-        const response  = await ReqFunc.getReq<EstadoInfo_brute | []>(this.url_localidades_estados + estado)
-        if(Array.isArray(response.content)) {
-            return undefined
-        }
-
-        const info: EstadoInfo = {
-            codearea: response.content.id,
-            sigla: response.content.sigla,
-            estado: response.content.nome,
-            regiao: response.content.regiao.nome
         }
 
         createFile(cache_url, JSON.stringify(info))

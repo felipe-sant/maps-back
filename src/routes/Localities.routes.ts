@@ -6,7 +6,7 @@ class LocalitiesRoutes {
     private router: Router = Router()
 
     private readonly url = "/location"
-    private readonly url_info_populacao = "/location/info/population/:codearea"
+    private readonly url_info_populacao = "/location/population/:codearea"
 
     constructor() {
         this.controler = new LocalitiesController()

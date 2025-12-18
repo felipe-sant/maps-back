@@ -16,7 +16,7 @@ class LocalitiesController {
 
     public async getInfoLocation(req: Request, res: Response) {
         try {
-            const { lon, lat, ano } = req.query
+            const { lon, lat } = req.query
             if (!lon || !lat) {
                 res.status(400).json("'lon' and 'lat' is required in query")
                 return
@@ -35,23 +35,7 @@ class LocalitiesController {
                 return
             }
 
-            let periodo: Periodo | undefined
-            if (ano) {
-                let valid = false
-                Anos.forEach(a => {
-                    if (ano === a) {
-                        valid = true
-                    }
-                })
-                if (!valid) {
-                    res.status(400).json("The valid years are '2001', '2002', '2003', '2004', '2005', '2006', '2008', '2009', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2024', '2025'")
-                    return
-                } else {
-                    periodo = ano as Periodo
-                }
-            }
-
-            const info = await this.service.getInfo(coordinate, periodo)
+            const info = await this.service.getInfo(coordinate)
 
             res.status(200).json(info)
         } catch (error: unknown) {
@@ -90,13 +74,13 @@ class LocalitiesController {
             const codeLen = String(code).length
 
             if (codeLen === 2) {
-                const isValidCode = await this.service.isValidCodeareaState(code)
+                const isValidCode = await this.service_coord.isValidCodeareaState(code)
                 if (!isValidCode) {
                     res.status(400).json("'codearea' does not belong to a state")
                     return
                 }
             } else if (codeLen === 7) {
-                const isValidCode = await this.service.isValidCodeareaMunicipio(code)
+                const isValidCode = await this.service_coord.isValidCodeareaMunicipio(code)
                 if (!isValidCode) {
                     res.status(400).json("'codearea' does not belong to a municipality")
                     return
