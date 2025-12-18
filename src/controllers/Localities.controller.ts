@@ -52,17 +52,11 @@ class LocalitiesController {
             let periodo: Periodo | undefined
             if (ano) {
                 let valid = false
-                Anos.forEach(a => {
-                    if (ano === a) {
-                        valid = true
-                    }
-                })
+                Anos.forEach(a => { if (ano === a) { valid = true } })
                 if (!valid) {
                     res.status(400).json("The valid years are '2001', '2002', '2003', '2004', '2005', '2006', '2008', '2009', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2024', '2025'")
                     return
-                } else {
-                    periodo = ano as Periodo
-                }
+                } else { periodo = ano as Periodo }
             }
 
             const code = Number(codearea)

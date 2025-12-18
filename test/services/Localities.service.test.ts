@@ -1,7 +1,6 @@
 import LocalitiesService from "../../src/services/Localities.service"
 import Coordinate from "../../src/types/Coordinate.type"
 import MunicipioInfo from "../../src/types/MunicipioInfo.type"
-import PopulacaoInfo from "../../src/types/PopulacaoInfo.type"
 
 describe("Test Localities.service", () => {
     const service = new LocalitiesService()

@@ -1,5 +1,4 @@
 import { point } from "@turf/helpers"
-import UFs from "../const/UFs"
 import Coordinate from "../types/Coordinate.type"
 import GeoJson, { Feature } from "../types/GeoJson.type"
 import getRandomState from "../utils/getRandomState"
@@ -13,10 +12,25 @@ class CoordinateService {
         this.ibgeAPI = new IbgeAPI()
     }
 
+    private getRandomCoordPerStateObj(state: Feature): Coordinate {
+        let points: number[][]
+        if (state.geometry.type === 'Polygon') {
+            points = state.geometry.coordinates[0]
+        } else {
+            points = state.geometry.coordinates[0][0]
+        }
+        if (!points || points.length === 0) { throw new Error("UF sem coordenadas válidas") }
+        const randomPoint = points[Math.floor(Math.random() * points.length)]
+        return {
+            lat: randomPoint[1],
+            lon: randomPoint[0],
+        }
+    }
+
     public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
         const p = point([coordinate.lon, coordinate.lat])
         const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs()
-        for(const u of ufs.features) {
+        for (const u of ufs.features) {
             const inUf = booleanPointInPolygon(p, u.geometry)
             if (inUf) return true
         }
@@ -41,31 +55,10 @@ class CoordinateService {
         }
     }
 
-    private getRandomCoordPerStateObj(state: Feature): Coordinate {
-        let points: number[][]
-
-        if (state.geometry.type === 'Polygon') {
-            points = state.geometry.coordinates[0]
-        } else {
-            points = state.geometry.coordinates[0][0]
-        }
-
-        if (!points || points.length === 0) {
-            throw new Error("UF sem coordenadas válidas")
-        }
-
-        const randomPoint = points[Math.floor(Math.random() * points.length)]
-
-        return {
-            lat: randomPoint[1],
-            lon: randomPoint[0],
-        }
-    }
-
     public async pointInState(coordinate: Coordinate, code: number): Promise<boolean> {
         const p = point([coordinate.lon, coordinate.lat])
         const uf: GeoJson = await this.ibgeAPI.getMalhaMunicipioPerUF(code)
-        for(const m of uf.features) {
+        for (const m of uf.features) {
             const inMun = booleanPointInPolygon(p, m.geometry)
             if (inMun) return true
         }
@@ -74,12 +67,9 @@ class CoordinateService {
 
     public async getRandomCoord(codigo?: number): Promise<Coordinate> {
         codigo = codigo ? codigo : getRandomState()
-
         const state = await this.ibgeAPI.getMalhaPerUF(codigo)
-
         const feature = state.features[0]
         if (!feature) throw new Error("Nenhuma feature encontrada para essa UF")
-
         return this.getRandomCoordPerStateObj(feature)
     }
 
