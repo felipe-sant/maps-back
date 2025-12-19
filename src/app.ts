@@ -4,7 +4,9 @@ import requestLoggerMiddleware from './middlewares/requestLogger.middleware'
 import dotenv from "dotenv"
 import coordinateRoutes from './routes/Coordinate.routes'
 import localitiesRoutes from './routes/Localities.routes'
+import createPaste from './utils/createPaste'
 
+createPaste(".cache/")
 dotenv.config()
 
 const app = express()
