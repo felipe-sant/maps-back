@@ -15,7 +15,7 @@ class CoordinateService {
 
     public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
         const p = point([coordinate.lon, coordinate.lat])
-        const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs(false)
+        const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs()
         for (const u of ufs.features) {
             const inUf = booleanPointInPolygon(p, u.geometry)
             if (inUf) return true
@@ -45,7 +45,7 @@ class CoordinateService {
         const p = point([coordinate.lon, coordinate.lat])
         const uf: GeoJson = await this.ibgeAPI.getMalhaMunicipioPerUF(code)
         for (const m of uf.features) {
-            const inMun = booleanPointInPolygon(p, m.geometry)
+            const inMun = booleanPointInPolygon(p, m.geometry, { ignoreBoundary: false })
             if (inMun) return true
         }
         return false

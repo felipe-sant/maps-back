@@ -14,7 +14,6 @@ class ReqFunc {
             })
             return { status: response.status, content: response.data }
         } catch (error: unknown) {      
-            console.error(error)
             return { status: 500, content: undefined }
         }
     }

@@ -11,7 +11,7 @@ describe("Test Localities.service", () => {
         expect(info).toEqual(expectInfo)
     })
 
-    it("LocalitiesService.getInfo(coordinate, periodo)", async () => {
+    it("LocalitiesService.getInfo(coordinate)", async () => {
         const coord: Coordinate = { lat: -23.2237, lon: -45.9009 }
         const info = await service.getInfo(coord)
 

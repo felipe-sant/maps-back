@@ -18,14 +18,14 @@ class IbgeAPI {
     private readonly url_localidades_estados = this.url + "v1/localidades/estados/"
     private readonly url_populacao = this.url + "v3/agregados/6579/periodos/all/variaveis"
 
-    public async getMalhaUFs(intrarregiao: boolean = true): Promise<GeoJson> {
+    public async getMalhaUFs(): Promise<GeoJson> {
         const cache_url = ".cache/malha_ufs.json"
         const file = readFile(cache_url)
         if (file) return JSON.parse(file)
         const query = {
             formato: 'application/vnd.geo+json',
             qualidade: 'minima',
-            intrarregiao: intrarregiao ? "UF" : ""
+            intrarregiao: "UF"
         }
         const response = await ReqFunc.getReq<GeoJson>(this.url_malhas_pais + "BR", query)
         if (response.status !== 200) throw new Error("Erro na api do ibge ao pegar malha por país")
