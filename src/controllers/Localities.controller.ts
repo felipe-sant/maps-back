@@ -21,22 +21,18 @@ class LocalitiesController {
                 res.status(400).json("'lon' and 'lat' is required in query")
                 return
             }
-
             const nLon = Number(lon)
             const nLat = Number(lat)
             if (isNaN(nLon) || isNaN(nLat)) {
                 res.status(400).json("'lon' and 'lat' have to be numbers")
                 return
             }
-
             const coordinate: Coordinate = { lat: nLat, lon: nLon }
             if (!await this.service_coord.pointInBrazil(coordinate)) {
                 res.status(422).json("The coordinates must be in Brazil.")
                 return
             }
-
             const info = await this.service.getInfo(coordinate)
-
             res.status(200).json(info)
         } catch (error: unknown) {
             console.error("Error:", error)
@@ -48,7 +44,6 @@ class LocalitiesController {
         try {
             const { codearea } = req.params
             const { ano } = req.query
-
             let periodo: Periodo | undefined
             if (ano) {
                 let valid = false
@@ -58,15 +53,12 @@ class LocalitiesController {
                     return
                 } else { periodo = ano as Periodo }
             }
-
             const code = Number(codearea)
             if (isNaN(code)) {
                 res.status(400).json("'codearea' must be a number")
                 return
             }
-
             const codeLen = String(code).length
-
             if (codeLen === 2) {
                 const isValidCode = await this.service_coord.isValidCodeareaState(code)
                 if (!isValidCode) {

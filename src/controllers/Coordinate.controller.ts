@@ -14,7 +14,6 @@ class CoordinateController {
         try {
             const { sigla } = req.params
             let codigo
-
             if (sigla) {
                 const filteredUF = UFs.filter(u => u.sigla === sigla.toUpperCase())
                 if (filteredUF.length === 0) {
@@ -24,7 +23,6 @@ class CoordinateController {
                     codigo = filteredUF[0].codigo
                 }
             }
-
             const randomCoord: Coordinate = await this.service.getRandomCoord(codigo)
             res.status(200).json(randomCoord)
         } catch (error: unknown) {
