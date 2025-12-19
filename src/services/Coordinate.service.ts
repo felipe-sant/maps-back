@@ -13,14 +13,13 @@ class CoordinateService {
         this.ibgeAPI = new IbgeAPI()
     }
 
-    public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
-        const p = point([coordinate.lon, coordinate.lat])
-        const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs()
-        for (const u of ufs.features) {
-            const inUf = booleanPointInPolygon(p, u.geometry)
-            if (inUf) return true
+    public async isValidCodeareaState(codearea: number): Promise<boolean> {
+        const infoLocalidade = await this.ibgeAPI.getLocalidadePerEstado(codearea)
+        if (!infoLocalidade) {
+            return false
+        } else {
+            return true
         }
-        return false
     }
 
     public async isValidCodeareaMunicipio(codearea: number): Promise<boolean> {
@@ -32,13 +31,14 @@ class CoordinateService {
         }
     }
 
-    public async isValidCodeareaState(codearea: number): Promise<boolean> {
-        const infoLocalidade = await this.ibgeAPI.getLocalidadePerEstado(codearea)
-        if (!infoLocalidade) {
-            return false
-        } else {
-            return true
+    public async pointInBrazil(coordinate: Coordinate): Promise<boolean> {
+        const p = point([coordinate.lon, coordinate.lat])
+        const ufs: GeoJson = await this.ibgeAPI.getMalhaUFs()
+        for (const u of ufs.features) {
+            const inUf = booleanPointInPolygon(p, u.geometry)
+            if (inUf) return true
         }
+        return false
     }
 
     public async pointInState(coordinate: Coordinate, code: number): Promise<boolean> {

@@ -3,13 +3,16 @@
     "files.exclude": {
         "**/.git": true,
         "**/node_modules": true,
-        ".gitignore": false,
+        ".gitignore": true,
         ".vscode": true,
-        "README.md": false,
+        "README.md": true,
         "package-lock.json": true,
         "package.json": false,
         "tsconfig.json": true,
         "LICENSE": true,
-        ".github/": true
+        ".github/": true,
+        "eslint.config.mts": true,
+        "jest.config.ts": true,
+        "api/": true
     }
 }
