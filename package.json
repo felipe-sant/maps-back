@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node out/src/index.js",
+    "prestart": "node out/src/prestart.js",
     "build": "tsc -p tsconfig.json --outDir out",
     "dev": "DOTENV_CONFIG_QUIET=true nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
     "lint": "eslint . --ext .ts",
