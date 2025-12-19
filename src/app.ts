@@ -17,6 +17,8 @@ app.use(requestLoggerMiddleware)
 
 app.use("/api", coordinateRoutes)
 app.use("/api", localitiesRoutes)
-app.use("/", (_: Request, res: Response) => res.sendStatus(404))
+app.get("/", (_req, res) => {
+    res.send("OK Vercel")
+});
 
 export default app
